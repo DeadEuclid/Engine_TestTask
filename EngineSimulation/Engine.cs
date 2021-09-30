@@ -13,24 +13,24 @@ namespace EngineSimulation
         /// <summary>
         /// Момент инерции двигателя
         /// </summary>
-        internal readonly double InertionMoment;
+        internal double InertionMoment { get; }
         /// <summary>
         ///Коэффициент зависимости скорости нагрева от скорости вращения коленвала
         /// </summary>
-        internal readonly double VelosityRotationCoefficient;
+        internal double VelosityRotationCoefficient { get; }
         /// <summary>
         /// Коэффициент зависимости скорости нагрева от крутящего момента
         /// </summary>
-        internal readonly double TorqueCoefficient;
+        internal double TorqueCoefficient { get; }
         /// <summary>
         /// Коэффициент зависимости скорости охлаждения от температуры двигателя и окружающей среды
         /// </summary>
-        internal readonly double CollingAmbientCoefficient;
+        internal double CollingAmbientCoefficient { get; }
         /// <summary>
         /// Кусочно-линейная зависимость крутящего момента, вырабатываемого двигателем, от
         ///скорости вращения вала
         /// </summary>
-        internal readonly IEnumerable<TorquVelosityPoint> TorquVelosityPoints;
+        internal IEnumerable<TorquVelosityPoint> TorquVelosityPoints { get; }
         /// <summary>
         /// Температура пререгрева
         /// </summary>
@@ -64,7 +64,7 @@ namespace EngineSimulation
         /// </summary>
         /// <param name="ambientTemperature">Температура окружающей среды</param>
         /// <param name="timeStep">Количество секунд</param>
-        public void NextStanding(double ambientTemperature, double timeStep)
+        public virtual void NextStanding(double ambientTemperature, double timeStep)
         {
             double acceleration = GetAcceleration();
             var velosityRotate = GetVelosityRotate(acceleration, timeStep);
@@ -77,21 +77,38 @@ namespace EngineSimulation
         /// </summary>
         /// <param name="velosityRotate">Скорость вращения</param>
         /// <returns>Вращающий момент</returns>
-        internal double VelosityRotateToTorque(double velosityRotate)
+        internal virtual double VelosityRotateToTorque(double velosityRotate)
         {
-            var startPoint = TorquVelosityPoints.First(point => point.Velosity >= velosityRotate);
-            var endPoint = TorquVelosityPoints.First(point => point.Velosity <= velosityRotate);
+            TorquVelosityPoint startPoint;
+            TorquVelosityPoint endPoint;
+            if (TorquVelosityPoints.Any(point => point.Velosity >= velosityRotate))
+            {
+                startPoint = TorquVelosityPoints.First(point => point.Velosity >= velosityRotate);
+            }
+            else
+            {
+                startPoint = TorquVelosityPoints.First(point => point.Velosity <= velosityRotate);
+            }
+            if (TorquVelosityPoints.Any(point => point.Velosity <= velosityRotate))
+            {
+                endPoint = TorquVelosityPoints.First(point => point.Velosity <= velosityRotate);
+            }
+            else
+            {
+                endPoint= TorquVelosityPoints.First(point => point.Velosity >= velosityRotate);
+            }
+
             var relation = (velosityRotate - startPoint.Velosity) / (endPoint.Velosity - velosityRotate);
             return (startPoint.Torque + relation * endPoint.Torque) / (1 + relation);
         }
-        internal double GetAcceleration() => ((InstantStanding)InstantStanding).Torque / InertionMoment;
-        internal double GetVelosityRotate(double acceleration, double timeStep) => ((InstantStanding)InstantStanding).VelosityRotate + acceleration * timeStep;
-        internal double GetTemperature(double torque, double velosityRotate, double ambientTemperature)
+        internal virtual double GetAcceleration() => ((InstantStanding)InstantStanding).Torque / InertionMoment;
+        internal virtual double GetVelosityRotate(double acceleration, double timeStep) => ((InstantStanding)InstantStanding).VelosityRotate + acceleration * timeStep;
+        internal virtual double GetTemperature(double torque, double velosityRotate, double ambientTemperature)
             => InstantStanding.Temerature + GetHeatingRate(torque, velosityRotate) - GetCoolingRate(ambientTemperature);
 
-        internal double GetHeatingRate(double torque, double velosityRotate) =>
+        internal virtual double GetHeatingRate(double torque, double velosityRotate) =>
             torque * TorqueCoefficient * Math.Pow(velosityRotate, 2) * VelosityRotationCoefficient;
-        internal double GetCoolingRate(double ambientTemperature)
+        internal virtual double GetCoolingRate(double ambientTemperature)
             => CollingAmbientCoefficient * (ambientTemperature - InstantStanding.Temerature);
 
     }
