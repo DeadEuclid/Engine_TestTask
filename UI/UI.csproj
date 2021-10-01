@@ -9,4 +9,10 @@
     <ProjectReference Include="..\TestBench\TestBench.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="configuration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -12,7 +12,7 @@ namespace TestBench
         /// <summary>
         /// Модельное время в секундах
         /// </summary>
-        private readonly double ModelTime;
+        private double ModelTime;
         /// <summary>
         /// Класс тестирования устройств на время до пререгрева
         /// </summary>
@@ -34,6 +34,7 @@ namespace TestBench
                 if (Engine.CurrentTemperature >= Engine.OverheatingTemperature)
                     return new TestResult(ReasonEnd.Overheating, ModelTime);
                 Engine.NextStanding(AmbientTemperature, TimeStep);
+                ModelTime += TimeStep;
             } while (ModelTime < OverheatWaiting * 360);
             return new TestResult(ReasonEnd.OverTime, ModelTime);
         }

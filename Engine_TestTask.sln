@@ -9,11 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EngineSimulation", "EngineS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestBench", "TestBench\TestBench.csproj", "{4A17F441-B69F-4F51-ACD8-2580EF3806F4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Config Files", "Config Files", "{A6383B46-8778-406E-B610-B2946E50478E}"
-	ProjectSection(SolutionItems) = preProject
-		configuration.json = configuration.json
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -85,21 +85,23 @@ namespace EngineSimulation
         {
             TorquVelosityPoint startPoint;
             TorquVelosityPoint endPoint;
-            if (TorquVelosityPoints.Any(point => point.Velosity >= velosityRotate))
+            if (TorquVelosityPoints.Any(point => velosityRotate<=point.Velosity  ))
             {
-                startPoint = TorquVelosityPoints.First(point => point.Velosity >= velosityRotate);
+                endPoint = TorquVelosityPoints.First(point => velosityRotate <= point.Velosity);
             }
             else
             {
                 startPoint = TorquVelosityPoints.Last();
+                endPoint = TorquVelosityPoints.Last();
             }
-            if (TorquVelosityPoints.Any(point => point.Velosity <= velosityRotate))
+            if (TorquVelosityPoints.Any(point => velosityRotate >= point.Velosity))
             {
-                endPoint = TorquVelosityPoints.First(point => point.Velosity <= velosityRotate);
+                startPoint = TorquVelosityPoints.First(point => velosityRotate >= point.Velosity);
             }
             else
             {
                 endPoint= TorquVelosityPoints.First();
+                startPoint= TorquVelosityPoints.First();
             }
 
             var relation = (velosityRotate - startPoint.Velosity) / (endPoint.Velosity - velosityRotate);
