@@ -3,11 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "UI\UI.csproj", "{0F37FE67-47A3-4A0A-B9EC-1C8DC7BDD725}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI", "UI\UI.csproj", "{0F37FE67-47A3-4A0A-B9EC-1C8DC7BDD725}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EngineSimulation", "EngineSimulation\EngineSimulation.csproj", "{32762729-1B61-414A-A8BC-476E156ED813}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EngineSimulation", "EngineSimulation\EngineSimulation.csproj", "{32762729-1B61-414A-A8BC-476E156ED813}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestBench", "TestBench\TestBench.csproj", "{4A17F441-B69F-4F51-ACD8-2580EF3806F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestBench", "TestBench\TestBench.csproj", "{4A17F441-B69F-4F51-ACD8-2580EF3806F4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Config Files", "Config Files", "{A6383B46-8778-406E-B610-B2946E50478E}"
+	ProjectSection(SolutionItems) = preProject
+		configuration.json = configuration.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -3,44 +3,44 @@ using System;
 
 namespace TestBench
 {
-    public class OverheatingEngineTesting
+    public class OverheatingTester
     {
-        private IEngine Engine;
+        private IOverheatableMachine Engine;
         private double TimeStep;
         private double AmbientTemperature;
-        private double TimeToCutoff;
+        private double OverheatWaiting;
         /// <summary>
-        /// Модельное время
+        /// Модельное время в секундах
         /// </summary>
-        public readonly double ModelTime;
+        private readonly double ModelTime;
         /// <summary>
-        /// Класс тестирования двигателей на время до пререгрева
+        /// Класс тестирования устройств на время до пререгрева
         /// </summary>
-        /// <param name="engine">Двигатель для тестирования</param>
+        /// <param name="machine">Устройство для тестирования</param>
         /// <param name="timeStep">Минимальный промежуток времени для расчёта</param>
         /// <param name="ambientTemperature">Темпратура окружающей среды</param>
-        /// <param name="timeToCutoff">Время ожидания прегрева в часах</param>
-        public OverheatingEngineTesting(IEngine engine, double timeStep, double ambientTemperature, double timeToCutoff)
+        /// <param name="overheatWaiting">Время ожидания прегрева в часах</param>
+        public OverheatingTester(IOverheatableMachine machine, double timeStep, double ambientTemperature, double overheatWaiting)
         {
-            Engine = engine;
+            Engine = machine;
             TimeStep = timeStep;
             AmbientTemperature = ambientTemperature;
-            TimeToCutoff = timeToCutoff;
+            OverheatWaiting = overheatWaiting;
         }
         public TestResult RunTest()
         {
             do
             {
-                if (Engine.InstantStanding.Temerature >= Engine.OverheatingTemperature)
+                if (Engine.CurrentTemperature >= Engine.OverheatingTemperature)
                     return new TestResult(ReasonEnd.Overheating, ModelTime);
                 Engine.NextStanding(AmbientTemperature, TimeStep);
-            } while (ModelTime < TimeToCutoff);
+            } while (ModelTime < OverheatWaiting * 360);
             return new TestResult(ReasonEnd.OverTime, ModelTime);
         }
         public struct TestResult
         {
-            readonly ReasonEnd ReasonEnd;
-            readonly double Time;
+            public readonly ReasonEnd ReasonEnd;
+            public readonly double Time;
 
             public TestResult(ReasonEnd reasonEnd, double time)
             {
