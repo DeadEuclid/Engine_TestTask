@@ -73,7 +73,7 @@ namespace EngineSimulation
             double acceleration = GetAcceleration();
             CurrentVelosityRotate = GetVelosityRotate(acceleration, timeStep);
             CurrentTorque = VelosityRotateToTorque(CurrentVelosityRotate);
-            CurrentTemperature = GetTemperature(CurrentTorque, CurrentVelosityRotate, ambientTemperature);
+            CurrentTemperature = GetTemperature(CurrentTorque, CurrentVelosityRotate, ambientTemperature,timeStep);
 
         }
         /// <summary>
@@ -109,9 +109,8 @@ namespace EngineSimulation
         }
         internal virtual double GetAcceleration() => CurrentTorque/ InertionMoment;
         internal virtual double GetVelosityRotate(double acceleration, double timeStep) => CurrentVelosityRotate + acceleration * timeStep;
-        internal virtual double GetTemperature(double torque, double velosityRotate, double ambientTemperature)
-            => CurrentTemperature + GetHeatingRate(torque, velosityRotate) - GetCoolingRate(ambientTemperature);
-
+        internal virtual double GetTemperature(double torque, double velosityRotate, double ambientTemperature,double timeStep)
+            => CurrentTemperature + (GetHeatingRate(torque, velosityRotate) - GetCoolingRate(ambientTemperature))*timeStep;
         internal virtual double GetHeatingRate(double torque, double velosityRotate) =>
             torque * TorqueCoefficient * Math.Pow(velosityRotate, 2) * VelosityRotationCoefficient;
         internal virtual double GetCoolingRate(double ambientTemperature)

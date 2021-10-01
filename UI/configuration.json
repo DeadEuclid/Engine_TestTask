@@ -11,6 +11,6 @@
 
     }
   ],
-  "TimeStep": 1,
+  "TimeStep": 15,
   "OverheatWaitingTimeInHourse": 10000
 }

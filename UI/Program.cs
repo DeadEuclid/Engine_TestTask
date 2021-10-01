@@ -11,7 +11,7 @@ namespace UI
         }
 
     }
-    public static class App
+    public class App
     {
         public static void Run()
         {
@@ -31,6 +31,10 @@ namespace UI
                     {
                         Console.WriteLine("Превышенно время ожидания перегрева, возможно он не достижим при данной температуре окружающей среды, поднимите её или повысте время ожидания в файле конфигурации ");
                     }
+                }
+                else
+                {
+                    Console.WriteLine("Температура введена не корректно");
                 }
             }
         }

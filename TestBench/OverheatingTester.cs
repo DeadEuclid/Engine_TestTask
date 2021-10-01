@@ -32,9 +32,13 @@ namespace TestBench
             do
             {
                 if (Engine.CurrentTemperature >= Engine.OverheatingTemperature)
+
                     return new TestResult(ReasonEnd.Overheating, ModelTime);
+
                 Engine.NextStanding(AmbientTemperature, TimeStep);
+
                 ModelTime += TimeStep;
+
             } while (ModelTime < OverheatWaiting * 360);
             return new TestResult(ReasonEnd.OverTime, ModelTime);
         }
