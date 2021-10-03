@@ -1,10 +1,10 @@
 ﻿namespace EngineSimulation
 {
-    public interface IOverheatableMachine
+    public interface IOverheatableDevice
     {
        double CurrentTemperature  { get; }
          double OverheatingTemperature { get; }
 
-        void NextStanding(double ambientTemperature, double timeStep);
+        void NextStanding(double ambientTemperature);
     }
 }

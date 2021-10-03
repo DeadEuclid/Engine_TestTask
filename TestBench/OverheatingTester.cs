@@ -5,8 +5,7 @@ namespace TestBench
 {
     public class OverheatingTester
     {
-        private IOverheatableMachine Engine;
-        private double TimeStep;
+        private IOverheatableDevice Device;
         private double AmbientTemperature;
         private double OverheatWaiting;
         /// <summary>
@@ -16,14 +15,12 @@ namespace TestBench
         /// <summary>
         /// Класс тестирования устройств на время до пререгрева
         /// </summary>
-        /// <param name="machine">Устройство для тестирования</param>
-        /// <param name="timeStep">Минимальный промежуток времени для расчёта</param>
+        /// <param name="device">Устройство для тестирования</param>
         /// <param name="ambientTemperature">Темпратура окружающей среды</param>
         /// <param name="overheatWaiting">Время ожидания прегрева в часах</param>
-        public OverheatingTester(IOverheatableMachine machine, double timeStep, double ambientTemperature, double overheatWaiting)
+        public OverheatingTester(IOverheatableDevice device, double ambientTemperature, double overheatWaiting)
         {
-            Engine = machine;
-            TimeStep = timeStep;
+            Device = device;
             AmbientTemperature = ambientTemperature;
             OverheatWaiting = overheatWaiting;
         }
@@ -31,13 +28,13 @@ namespace TestBench
         {
             do
             {
-                if (Engine.CurrentTemperature >= Engine.OverheatingTemperature)
+                if (Device.CurrentTemperature >= Device.OverheatingTemperature)
 
                     return new TestResult(ReasonEnd.Overheating, ModelTime);
 
-                Engine.NextStanding(AmbientTemperature, TimeStep);
+                Device.NextStanding(AmbientTemperature);
 
-                ModelTime += TimeStep;
+                ModelTime++;
 
             } while (ModelTime < OverheatWaiting * 360);
             return new TestResult(ReasonEnd.OverTime, ModelTime);

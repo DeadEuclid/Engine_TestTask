@@ -8,8 +8,7 @@ namespace UI
     {
         public List<EngineConfig> Engines { get; set; }
         public EngineConfig Engine => Engines.First();
-        public double TimeStep { get; set; }
-        public int OverheatWaitingTimeInHourse { get; set; }
+        public int OverheatWaitingTimeInVirtualHourse { get; set; }
     }
 
 

@@ -14,7 +14,7 @@ namespace UI
             
                 var config = JsonSerializer.Deserialize<ConfigJsonModel>(File.ReadAllText("configuration.json"));
                 var engine = new InternalСombustionEngine(config.Engine, ambientTemperature); 
-                return new OverheatingTester(engine, config.TimeStep, ambientTemperature, config.OverheatWaitingTimeInHourse);
+                return new OverheatingTester(engine, ambientTemperature, config.OverheatWaitingTimeInVirtualHourse);
         }
     }
 

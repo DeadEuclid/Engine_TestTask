@@ -7,13 +7,14 @@ namespace UI
     {
         static void Main(string[] args)
         {
-            App.Run();
+           new OverHeatingTesterApp().Run();
         }
 
     }
-    public class App
+    public class OverHeatingTesterApp
     {
-        public static void Run()
+
+        public  void Run()
         {
             while (true)
             {
@@ -38,14 +39,16 @@ namespace UI
                 }
             }
         }
-        private static OverheatingTester GetTester(double ambientTemperature)
+        private  OverheatingTester GetTester(double ambientTemperature)
         {
             try
             {
-                return new Configurator().GetInternalСombustionEngineOverheatingTester(ambientTemperature);
+                var configurator = new Configurator();
+                var tester = configurator.GetInternalСombustionEngineOverheatingTester(ambientTemperature);
+                return tester;
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 
                 Console.WriteLine(@"Файл конфигурации несуществует или написан некорректно, проверьте корректность конфигурационного файла и повторите попытку
@@ -57,6 +60,7 @@ namespace UI
             }
 
         }
+
     }
 }
 

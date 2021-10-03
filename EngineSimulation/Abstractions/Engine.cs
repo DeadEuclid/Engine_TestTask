@@ -7,7 +7,7 @@ namespace EngineSimulation
     /// <summary>
     /// Абстрактный двигатель, по умолчанию реализован как ДВС
     /// </summary>
-    public abstract class Engine : IOverheatableMachine
+    public abstract class Engine : IOverheatableDevice
     {
 
         /// <summary>
@@ -36,7 +36,6 @@ namespace EngineSimulation
         public double CurrentTemperature { get; private set; }
         public double CurrentVelosityRotate { get; private set; }
         public double CurrentTorque { get; private set; }
-
         /// <summary>
         /// 
         /// </summary>
@@ -61,19 +60,19 @@ namespace EngineSimulation
         }
         internal Engine(EngineConfig config, double ambientTemperature) : this(config.InertionMoment, config.VelosityRotateHeatingCoefficient, config.TorqueHeatingCoefficient, config.OverheatingTemperature, config.TemperatureOfEngineAndAmbientHeatingCoefficient, ambientTemperature, config.TorqueVelosityPoints)
         {
-        
+
         }
         /// <summary>
-        /// Обновляет текущее состояние двигателя при определённой темпрературе окружающей среды на определённое количество секунд вперёд
+        /// Обновляет текущее состояние двигателя при определённой темпрературе окружающей среды на cекунду вперёд
         /// </summary>
         /// <param name="ambientTemperature">Температура окружающей среды</param>
-        /// <param name="timeStep">Количество секунд</param>
-        public virtual void NextStanding(double ambientTemperature, double timeStep)
+
+        public virtual void NextStanding(double ambientTemperature)
         {
             double acceleration = GetAcceleration();
-            CurrentVelosityRotate = GetVelosityRotate(acceleration, timeStep);
+            CurrentVelosityRotate = GetVelosityRotate(acceleration);
             CurrentTorque = VelosityRotateToTorque(CurrentVelosityRotate);
-            CurrentTemperature = GetTemperature(CurrentTorque, CurrentVelosityRotate, ambientTemperature,timeStep);
+            CurrentTemperature = GetTemperature(CurrentTorque, CurrentVelosityRotate, ambientTemperature);
 
         }
         /// <summary>
@@ -81,41 +80,47 @@ namespace EngineSimulation
         /// </summary>
         /// <param name="velosityRotate">Скорость вращения</param>
         /// <returns>Вращающий момент</returns>
-        internal virtual double VelosityRotateToTorque(double velosityRotate)///ToDo
+        internal virtual double VelosityRotateToTorque(double velosityRotate)
         {
+            //точки чежду которыми лежит данная скорость
             TorquVelosityPoint startPoint;
             TorquVelosityPoint endPoint;
-            if (TorquVelosityPoints.Any(point => velosityRotate<=point.Velosity  ))
+            if (TorquVelosityPoints.Any(point => velosityRotate >= point.Velosity))
+            {
+                startPoint = TorquVelosityPoints.Last(point => velosityRotate >= point.Velosity);
+            }
+            else
+            {//Выход за область определения слева
+                startPoint = TorquVelosityPoints.First();
+            }
+            if (TorquVelosityPoints.Any(point => velosityRotate <= point.Velosity))
             {
                 endPoint = TorquVelosityPoints.First(point => velosityRotate <= point.Velosity);
             }
             else
             {
-                startPoint = TorquVelosityPoints.Last();
+                //Выход за область определения справа
                 endPoint = TorquVelosityPoints.Last();
             }
-            if (TorquVelosityPoints.Any(point => velosityRotate >= point.Velosity))
+            if (endPoint.Torque == startPoint.Torque)
             {
-                startPoint = TorquVelosityPoints.First(point => velosityRotate >= point.Velosity);
+                return endPoint.Torque;
             }
             else
             {
-                endPoint= TorquVelosityPoints.First();
-                startPoint= TorquVelosityPoints.First();
+                //Находим уравнение прямой по двум точкам и  находим точку с данной скоростью лежащую на данной прямой
+                return (((velosityRotate - startPoint.Velosity) * (endPoint.Velosity - startPoint.Velosity)) / (endPoint.Torque - startPoint.Torque)) + startPoint.Torque;
             }
 
-            var relation = (velosityRotate - startPoint.Velosity) / (endPoint.Velosity - velosityRotate);
-            return (startPoint.Torque + relation * endPoint.Torque) / (1 + relation);
-        }
-        internal virtual double GetAcceleration() => CurrentTorque/ InertionMoment;
-        internal virtual double GetVelosityRotate(double acceleration, double timeStep) => CurrentVelosityRotate + acceleration * timeStep;
-        internal virtual double GetTemperature(double torque, double velosityRotate, double ambientTemperature,double timeStep)
-            => CurrentTemperature + (GetHeatingRate(torque, velosityRotate) - GetCoolingRate(ambientTemperature))*timeStep;
-        internal virtual double GetHeatingRate(double torque, double velosityRotate) =>
-            torque * TorqueCoefficient * Math.Pow(velosityRotate, 2) * VelosityRotationCoefficient;
-        internal virtual double GetCoolingRate(double ambientTemperature)
-            => CollingAmbientCoefficient * (ambientTemperature - CurrentTemperature);
 
+        }
+        internal virtual double GetAcceleration() => CurrentTorque / InertionMoment;
+        internal virtual double GetVelosityRotate(double acceleration) => CurrentVelosityRotate + acceleration ;
+        internal virtual double GetTemperature(double torque, double velosityRotate, double ambientTemperature) => CurrentTemperature + (GetHeatingRate(torque, velosityRotate) + GetCoolingRate(ambientTemperature)) ;
+
+        internal virtual double GetHeatingRate(double torque, double velosityRotate) => torque * TorqueCoefficient + Math.Pow(velosityRotate, 2) * VelosityRotationCoefficient;
+
+        internal virtual double GetCoolingRate(double ambientTemperature) => CollingAmbientCoefficient * (ambientTemperature - CurrentTemperature);
     }
 
 }
